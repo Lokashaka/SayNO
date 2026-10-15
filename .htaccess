@@ -1,0 +1,19 @@
+# Cadangan jika document root subdomain tidak bisa diarahkan ke folder public/.
+# Semua permintaan diteruskan ke public/, sehingga .env, storage/, dan vendor/
+# tidak pernah bisa dibuka dari browser. Jika document root sudah public/,
+# file ini tidak terpakai.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Validasi AutoSSL cPanel tetap dilayani dari folder ini.
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

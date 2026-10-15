@@ -1,0 +1,20 @@
+# Domain tiruan yang wajib terdeteksi (link.lookalike). Format: domain | nama resmi yang ditiru
+# Pola diambil dari modus yang sering dilaporkan: imbuhan, akhiran lain, huruf tiruan, salah ketik.
+bca-co.id | BCA
+klikbca-login.com | BCA
+bca.co.id.verifikasi-akun.xyz | BCA
+bcamobile.my.id | BCA
+bri-tarif-baru.my.id | BRI
+bri.web.id | BRI
+tokopedla.com | Tokopedia
+tokopedia-promo.com | Tokopedia
+shopee-hadiah.site | Shopee
+sh0pee.co.id | Shopee
+bankmandiri-co.id | Bank Mandiri
+bankrnandiri.co.id | Bank Mandiri
+dana-kaget.my.id | DANA
+pajak.go.id.lapor-spt.online | Direktorat Jenderal Pajak
+kemenkeu-bansos.id | Kementerian Keuangan
+bpjs-kesehatan.web.id | BPJS Kesehatan
+jne-cekresi.xyz | JNE
+posindonesia-paket.com | Pos Indonesia

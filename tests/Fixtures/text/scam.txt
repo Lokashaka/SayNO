@@ -1,0 +1,42 @@
+# Pesan penipuan (disamarkan). Baris "== kategori" lalu isi pesan, dipisah baris kosong.
+== hadiah
+Selamat! Nomor Anda terpilih mendapatkan hadiah Rp25.000.000 dari program undian akhir tahun. Klaim sekarang sebelum hangus.
+
+== hadiah
+SELAMAT ANDA MEMENANGKAN 1 UNIT MOTOR dari undian berhadiah. Silakan hubungi admin untuk proses pengiriman dan pajak hadiah.
+
+== paket
+Pelanggan Yth, paket Anda tertahan karena alamat tidak lengkap. Lengkapi data Anda segera agar paket bisa dikirim ulang.
+
+== paket
+Kurir: Selamat siang kak, ini foto paketnya ya. Silakan cek resi paket di aplikasi berikut, klik untuk download.
+
+== kerja
+Halo kak, kami membuka lowongan kerja paruh waktu. Cukup like dan subscribe video YouTube, dibayar Rp50.000 per tugas.
+
+== kerja
+Pekerjaan sampingan dari rumah! Gaji harian 300rb-1jt, cukup pakai HP.
+
+== tarif
+Nasabah Yth, mulai besok tarif transfer berubah menjadi Rp150.000/bulan. Jika tidak setuju silakan isi formulir.
+
+== tagihan
+Pemberitahuan: Anda memiliki denda tilang elektronik yang belum dibayar. Segera bayar hari ini sebelum STNK diblokir.
+
+== pinjaman
+Butuh dana? Pinjaman tanpa jaminan, cair hari ini, bunga rendah. Langsung chat admin.
+
+== keluarga
+Ma, ini aku. Nomor lama hilang, ini nomor baru. Tolong transfer dulu 2 juta ya, nanti aku ganti.
+
+== keluarga
+Bu, anak ibu kecelakaan dan sekarang di rumah sakit. Segera kirim uang untuk biaya operasi.
+
+== akun
+Akun WhatsApp Anda akan diblokir dalam 24 jam. Untuk verifikasi, kirim kode OTP yang masuk ke nomor ini.
+
+== akun
+Rekening Anda dibekukan. Verifikasi data segera melalui link berikut.
+
+== investasi
+Investasi robot trading, profit 10% per hari, pasti untung tanpa risiko. Modal kecil mulai 100rb.
