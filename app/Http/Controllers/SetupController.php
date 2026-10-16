@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\UploadLimit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -106,8 +107,9 @@ class SetupController extends Controller
             $checks[] = $this->check("Folder {$path} bisa ditulis", $writable, $writable ? 'ya' : 'tidak (ubah izin ke 755 atau 775)');
         }
 
-        $uploadBytes = min($this->bytes(ini_get('upload_max_filesize')), $this->bytes(ini_get('post_max_size')));
-        $checks[] = $this->check('Batas upload (minimal 21 MB)', $uploadBytes >= 21 * 1024 * 1024, ini_get('upload_max_filesize').' / post '.ini_get('post_max_size'));
+        // File APK di atas batas ini dibaca di browser, jadi batas kecil tidak menghalangi.
+        $uploadMb = round(UploadLimit::apkServerBytes() / 1048576, 1);
+        $checks[] = $this->check('Batas upload APK utuh ke server', true, "{$uploadMb} MB (php: ".ini_get('upload_max_filesize').' / post '.ini_get('post_max_size').'); file lebih besar dibaca di browser', required: false);
 
         $checks[] = $this->check('APP_KEY terisi', filled(config('app.key')), filled(config('app.key')) ? 'ya' : 'belum');
         $checks[] = $this->check('APP_DEBUG mati', ! config('app.debug'), config('app.debug') ? 'masih true' : 'false');
@@ -120,7 +122,12 @@ class SetupController extends Controller
             $checks[] = $this->check('Koneksi database', false, 'gagal, periksa DB_* di .env');
         }
 
-        $lastRun = Cache::get('scheduler:last_run');
+        // Halaman ini memakai cache file; tanda cron ditulis scheduler ke cache utama.
+        try {
+            $lastRun = Cache::store(config('sayno.primary_cache_store'))->get('scheduler:last_run');
+        } catch (Throwable) {
+            $lastRun = null;
+        }
         $cronOk = $lastRun !== null && now()->diffInMinutes($lastRun, true) <= 3;
         $checks[] = $this->check('Cron berjalan (3 menit terakhir)', $cronOk, $lastRun ?? 'belum pernah');
 
@@ -134,18 +141,5 @@ class SetupController extends Controller
     private function check(string $label, bool $ok, string $value, bool $required = true): array
     {
         return compact('label', 'ok', 'value', 'required');
-    }
-
-    private function bytes(string|false $value): int
-    {
-        $value = trim((string) $value);
-        $number = (int) $value;
-
-        return match (strtolower(substr($value, -1))) {
-            'g' => $number * 1024 ** 3,
-            'm' => $number * 1024 ** 2,
-            'k' => $number * 1024,
-            default => $number,
-        };
     }
 }

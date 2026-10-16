@@ -30,7 +30,7 @@ Tenggat: submit paper dan video **25 Oktober 2026**. Final 10–11 November 2026
 Kode harus jalan di **shared hosting cPanel paket terendah yang hanya mendukung PHP**: **tanpa terminal (SSH) dan tanpa symlink**. Akibatnya:
 
 - **Tidak ada `composer`, `npm`, atau `php artisan` di server.** `vendor/` dan `public/build` dibuat di lokal lalu diupload (`php scripts/build-deploy.php`). Migrate, seed, dan cache lewat halaman `/_setup` yang dilindungi token. Lihat `DEPLOY.md`.
-- **Tidak ada symlink.** Jangan memakai `storage:link` atau file publik di `storage/app/public`. Document root subdomain diarahkan ke `sayno/public` lewat menu cPanel.
+- **Tidak ada symlink.** Jangan memakai `storage:link` atau file publik di `storage/app/public`. Document root subdomain diarahkan ke `public_html/sayno/public` lewat menu cPanel (server ini mewajibkan document root di dalam `public_html`; `sayno/.htaccess` menjaga kode dari akses lewat domain utama).
 - **Tugas terjadwal wajib `Schedule::call()` + `Artisan::call()`.** `Schedule::command()` dan `Schedule::exec()` membuat proses baru lewat `proc_open`. Test `HostingWithoutTerminalTest` menjaga aturan ini.
 
 - **Tidak ada proses yang hidup terus.** Jangan memakai `queue:work` sebagai daemon, websocket, atau Laravel Octane/Reverb.
@@ -38,7 +38,7 @@ Kode harus jalan di **shared hosting cPanel paket terendah yang hanya mendukung 
 - **Batas waktu eksekusi sekitar 30–60 detik.** Webhook wajib menjawab `200 OK` secepatnya; kerja berat masuk antrean.
 - **Antrean dijalankan cron tiap menit** lewat menu Cron Jobs cPanel (tidak butuh terminal):
   ```
-  * * * * * /usr/local/bin/php /home/USER/sayno/artisan schedule:run >> /dev/null 2>&1
+  * * * * * /usr/local/bin/ea-php83 /home/USER/public_html/sayno/artisan schedule:run >> /dev/null 2>&1
   ```
   Di `routes/console.php`, `queue:work --stop-when-empty --max-time=50` dijadwalkan lewat `Schedule::call()`. Jika menu Cron Jobs tidak ada, pemanggil luar membuka `/_cron?token=...`.
 - **Hanya pakai paket Composer murni PHP.** Ekstensi yang boleh diandalkan: `zip`, `curl`, `mbstring`, `openssl`, `pdo_mysql`, `intl` (cek dulu di menu "Select PHP Version").
@@ -63,7 +63,7 @@ npm run build && php artisan test
 php scripts/build-deploy.php                # dist/sayno-deploy-*.zip, sudah berisi vendor/ tanpa paket dev
 ```
 
-Upload ZIP lewat File Manager, extract ke `/home/USER/sayno`, lalu arahkan document root subdomain `sayno.lokashaka.id` ke `sayno/public`. Migrate, seed, dan cache dijalankan dari `https://sayno.lokashaka.id/_setup` (aktif hanya jika `SAYNO_SETUP_TOKEN` diisi; kosongkan lagi setelah selesai).
+Upload ZIP lewat File Manager, extract ke `public_html/sayno`, lalu arahkan document root subdomain `sayno.lokashaka.id` ke `public_html/sayno/public`. Migrate, seed, dan cache dijalankan dari `https://sayno.lokashaka.id/_setup` (aktif hanya jika `SAYNO_SETUP_TOKEN` diisi; kosongkan lagi setelah selesai).
 
 ## Struktur folder
 

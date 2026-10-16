@@ -5,9 +5,9 @@ return [
     'required' => 'Kolom :attribute wajib diisi.',
     'string' => 'Kolom :attribute harus berupa teks.',
     'file' => ':attribute harus berupa file.',
-    'uploaded' => ':attribute gagal diunggah. Pastikan ukurannya tidak lebih dari 20 MB.',
+    'uploaded' => ':attribute gagal diunggah. Aktifkan JavaScript atau pakai browser terbaru agar file besar dibaca di browser Anda.',
     'max' => [
-        'file' => 'Maaf, file ini lebih dari 20 MB, jadi belum bisa kami periksa.',
+        'file' => 'File ini terlalu besar untuk diunggah langsung. Aktifkan JavaScript atau pakai browser terbaru agar file besar dibaca di browser Anda.',
         'string' => 'Teks terlalu panjang. Maksimal :max karakter.',
     ],
     'extensions' => 'Yang bisa diperiksa hanya file berakhiran .apk.',

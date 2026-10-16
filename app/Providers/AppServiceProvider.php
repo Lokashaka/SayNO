@@ -22,6 +22,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // /_setup dipakai untuk menjalankan migrasi, jadi tidak boleh bergantung pada tabel
+        // sessions dan cache yang baru ada setelah migrasi.
+        if (request()->is('_setup', '_setup/*')) {
+            config([
+                'sayno.primary_cache_store' => config('cache.default'),
+                'session.driver' => 'file',
+                'cache.default' => 'file',
+            ]);
+        }
+
         RateLimiter::for('checks', fn (Request $request) => Limit::perMinute(config('sayno.web_rate_limit'))
             ->by($request->ip())
             ->response(fn () => back()->withInput()->withErrors(['throttle' => __('web.errors.too_many')])));

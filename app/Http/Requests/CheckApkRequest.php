@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\UploadLimit;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CheckApkRequest extends FormRequest
@@ -13,7 +14,7 @@ class CheckApkRequest extends FormRequest
     {
         return [
             // Isi file tetap dicek sebagai ZIP oleh ApkAnalyzer; ekstensi hanya penyaring awal.
-            'apk' => ['required', 'file', 'extensions:apk', 'max:'.intdiv(config('sayno.apk.max_bytes'), 1024)],
+            'apk' => ['required', 'file', 'extensions:apk', 'max:'.intdiv(UploadLimit::apkServerBytes(), 1024)],
         ];
     }
 }

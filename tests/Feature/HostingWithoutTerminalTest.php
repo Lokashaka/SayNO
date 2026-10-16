@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Brand;
+use App\Providers\AppServiceProvider;
 use Illuminate\Console\Scheduling\CallbackEvent;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -70,6 +72,25 @@ class HostingWithoutTerminalTest extends TestCase
 
         $this->assertSame(9, Brand::count());
         $this->get('/_setup')->assertSee('Token dashboard /org/bca');
+    }
+
+    #[Test]
+    public function setup_works_before_the_sessions_and_cache_tables_exist(): void
+    {
+        config(['session.driver' => 'database', 'cache.default' => 'database']);
+        $this->app->instance('request', Request::create('/_setup/masuk', 'POST'));
+
+        (new AppServiceProvider($this->app))->boot();
+
+        $this->assertSame('file', config('session.driver'));
+        $this->assertSame('file', config('cache.default'));
+        $this->assertSame('database', config('sayno.primary_cache_store'));
+
+        config(['session.driver' => 'database', 'cache.default' => 'database']);
+        $this->app->instance('request', Request::create('/'));
+        (new AppServiceProvider($this->app))->boot();
+
+        $this->assertSame('database', config('session.driver'), 'Halaman lain tetap memakai sesi database.');
     }
 
     #[Test]

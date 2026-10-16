@@ -186,7 +186,7 @@ class WebCheckTest extends TestCase
     public function apks_over_20_mb_and_other_file_types_are_rejected(): void
     {
         $this->post('/cek/apk', ['apk' => UploadedFile::fake()->create('besar.apk', 21 * 1024)])
-            ->assertSessionHasErrors(['apk' => 'Maaf, file ini lebih dari 20 MB, jadi belum bisa kami periksa.']);
+            ->assertSessionHasErrors(['apk' => __('validation.max.file')]);
 
         $this->post('/cek/apk', ['apk' => UploadedFile::fake()->create('foto.jpg', 10)])
             ->assertSessionHasErrors('apk');

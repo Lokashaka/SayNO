@@ -78,7 +78,7 @@
                 action="{{ route('check.apk') }}"
                 enctype="multipart/form-data"
                 data-apk-form
-                data-server-max-bytes="{{ config('sayno.apk.max_bytes') }}"
+                data-server-max-bytes="{{ \App\Support\UploadLimit::apkServerBytes() }}"
                 data-browser-max-bytes="{{ config('sayno.apk.browser_max_bytes') }}"
                 data-unreadable="{{ __('result.apk_unreadable') }}"
                 data-unsupported="{{ __('web.home.apk_unsupported') }}"
