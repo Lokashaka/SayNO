@@ -120,6 +120,10 @@ Semua tugas terjadwal berjalan di proses yang sama, tanpa `exec`, `shell_exec`, 
 
 Kosongkan `SAYNO_SETUP_TOKEN=` di `.env`. Mulai saat itu `/_setup` menjawab 404, dan perubahan langsung berlaku. (Jika baru saja menekan **Bangun cache**, isi token lama sebentar, tekan **Hapus cache**, lalu kosongkan token.)
 
+## Migrasi tanpa token
+
+Untuk menjalankan migrasi tanpa membuka `/_setup`, buat file kosong `storage/app/private/run-migrations` lewat File Manager. Dalam 1 menit, cron menjalankan `migrate --force` sekali, menghapus file itu, dan mencatat hasilnya di `storage/logs/migrate.log`.
+
 ## Memperbarui versi
 
 1. Di lokal: `npm run build`, `php artisan test`, `php scripts/build-deploy.php`.

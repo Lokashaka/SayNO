@@ -36,6 +36,28 @@ class HostingWithoutTerminalTest extends TestCase
     }
 
     #[Test]
+    public function a_flag_file_makes_the_scheduler_run_pending_migrations_once(): void
+    {
+        $flag = storage_path('app/private/run-migrations');
+        $log = storage_path('logs/migrate.log');
+        @mkdir(dirname($flag), 0755, true);
+        @unlink($log);
+
+        $this->artisan('schedule:run')->assertSuccessful();
+        $this->assertFileDoesNotExist($log, 'Tanpa file penanda, migrasi tidak dijalankan.');
+
+        touch($flag);
+        $this->artisan('schedule:run')->assertSuccessful();
+
+        $this->assertFileDoesNotExist($flag, 'File penanda dihapus setelah dipakai.');
+        $this->assertFileExists($log);
+        $this->assertMatchesRegularExpression('/^\[\d{4}-\d{2}-\d{2} [\d:]{8}\]/', file_get_contents($log));
+        $this->assertStringNotContainsString('Gagal', file_get_contents($log));
+
+        @unlink($log);
+    }
+
+    #[Test]
     public function setup_is_hidden_until_a_long_token_is_configured(): void
     {
         config(['sayno.setup_token' => null]);

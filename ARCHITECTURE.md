@@ -143,7 +143,7 @@ Skor = min(100, jumlah bobot). Status: **0–29 Aman**, **30–59 Waspada**, **6
 ## 6. Database
 
 ```
-inbound_messages   id, wamid (unik), channel (meta|baileys), sender_hash, type, media_id, received_at, processed_at
+inbound_messages   id, wamid (unik), channel (meta|baileys), sender_hash, type, check_id, received_at, processed_at   -- tanpa isi pesan
 checks             id (ulid), source (wa|web), sender_hash, input_type (link|apk|text),
                    domain, file_sha256, score, status (safe|caution|danger), created_at
 signals            id, check_id, code, weight, meta (json)

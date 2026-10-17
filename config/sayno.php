@@ -127,6 +127,23 @@ return [
     // Nomor bot dalam format internasional tanpa "+", untuk tautan wa.me.
     'whatsapp_number' => env('SAYNO_WA_NUMBER'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Bot WhatsApp
+    |--------------------------------------------------------------------------
+    */
+
+    'whatsapp' => [
+        // APK dari WhatsApp diunduh utuh ke karantina (batas dokumen WhatsApp 100 MB).
+        'max_apk_bytes' => 100 * 1024 * 1024,
+
+        // Pesan teks pendek tanpa link dianggap sapaan, bukan bahan pemeriksaan.
+        'greeting_max_length' => 30,
+
+        // Balasan hanya dikirim di dalam jendela layanan 24 jam (diberi jarak aman).
+        'reply_window_hours' => 23,
+    ],
+
     // Batas cek per menit per alamat IP di web.
     'web_rate_limit' => (int) env('SAYNO_WEB_RATE_LIMIT', 10),
 

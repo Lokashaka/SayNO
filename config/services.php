@@ -53,6 +53,9 @@ return [
         'phone_number_id' => env('META_PHONE_NUMBER_ID'),
         'waba_id' => env('META_WABA_ID'),
         'graph_version' => env('META_GRAPH_VERSION', 'v25.0'),
+        'graph_url' => 'https://graph.facebook.com',
+        // Media hanya diunduh dari host milik Meta yang dikembalikan Graph API.
+        'media_hosts' => ['fbsbx.com', 'whatsapp.net', 'facebook.com', 'fbcdn.net'],
     ],
 
 ];
