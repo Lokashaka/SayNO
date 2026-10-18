@@ -50,7 +50,6 @@
                 </span>
             </div>
             <p class="max-w-[640px]">{{ __('web.footer.disclaimer') }}</p>
-            <p>{{ __('web.footer.contest') }}</p>
         </div>
     </footer>
 </body>

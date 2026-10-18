@@ -2,8 +2,12 @@
 
 namespace Tests\Unit\Analysis;
 
+use App\Enums\Status;
+use App\Models\Brand;
+use App\Models\LookalikeDomain;
 use App\Services\Analysis\LinkAnalyzer;
 use App\Services\Analysis\Signal;
+use App\Services\Scoring\RiskScorer;
 use Database\Seeders\BrandSeeder;
 use Database\Seeders\OfficialDomainSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -116,6 +120,43 @@ class LinkAnalyzerTest extends TestCase
         $this->assertSame('homoglyph', $lookalike->meta['technique']);
     }
 
+    #[Test]
+    public function a_domain_already_known_to_imitate_the_brand_is_dangerous(): void
+    {
+        $this->review('bca-care.com', LookalikeDomain::SUSPICIOUS);
+
+        $signals = $this->analyze('https://bca-care.com/login');
+
+        $this->assertNotNull($this->find($signals, 'link.lookalike'));
+        $this->assertSame(30, $this->find($signals, 'link.known_lookalike')->weight);
+        $this->assertSame(Status::Danger, app(RiskScorer::class)->score($signals)->status);
+    }
+
+    #[Test]
+    public function a_same_name_business_is_not_called_an_imitation(): void
+    {
+        $this->review('bni.com', LookalikeDomain::UNRELATED);
+
+        $signals = $this->analyze('https://bni.com');
+        $otherOwner = $this->find($signals, 'link.other_owner');
+
+        $this->assertNull($this->find($signals, 'link.lookalike'));
+        $this->assertSame('bni.co.id', $otherOwner->meta['official']);
+        $this->assertStringContainsString('bukan situs resmi BNI', __($otherOwner->reason, array_filter($otherOwner->meta, 'is_scalar')));
+        $this->assertSame(Status::Caution, app(RiskScorer::class)->score($signals)->status, 'Tetap diingatkan bahwa ini bukan situs resmi.');
+    }
+
+    #[Test]
+    public function parked_or_unreviewed_domains_keep_the_normal_lookalike_score(): void
+    {
+        $this->review('tokopedi.com', LookalikeDomain::PARKED);
+
+        $signals = $this->analyze('tokopedi.com');
+
+        $this->assertSame(50, $this->find($signals, 'link.lookalike')->weight);
+        $this->assertNull($this->find($signals, 'link.known_lookalike'));
+    }
+
     public static function lookalikes(): array
     {
         return array_map(fn ($line) => array_map('trim', explode('|', $line)), self::lines('lookalike.txt'));
@@ -148,6 +189,19 @@ class LinkAnalyzerTest extends TestCase
     private function find(array $signals, string $code): ?Signal
     {
         return collect($signals)->firstWhere('code', $code);
+    }
+
+    private function review(string $domain, string $verdict): void
+    {
+        LookalikeDomain::create([
+            'brand_id' => Brand::first()->id,
+            'domain' => $domain,
+            'technique' => 'combo',
+            'source' => 'generator',
+            'first_seen_at' => now(),
+            'verdict' => $verdict,
+            'verdict_source' => LookalikeDomain::SOURCE_MANUAL,
+        ]);
     }
 
     private function rdap(string $registeredAt): array

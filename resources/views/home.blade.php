@@ -162,6 +162,9 @@
                 <div class="card p-4">
                     <dt class="text-sm leading-5 font-medium text-ink-muted">{{ __("web.home.{$label}") }}</dt>
                     <dd class="mt-1 text-[32px] leading-10 font-bold text-navy-900">{{ number_format($stats[$key], 0, ',', '.') }}</dd>
+                    @if ($key === 'lookalikes')
+                        <dd class="mt-1"><a href="{{ route('phishing') }}#tiruan" class="text-sm font-semibold text-navy-900 hover:underline">{{ __('web.home.stats_lookalikes_link') }}</a></dd>
+                    @endif
                 </div>
             @endforeach
         </dl>

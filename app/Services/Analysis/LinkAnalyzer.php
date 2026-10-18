@@ -2,6 +2,7 @@
 
 namespace App\Services\Analysis;
 
+use App\Models\LookalikeDomain;
 use App\Services\Analysis\Link\DomainParser;
 use App\Services\Analysis\Link\LookalikeMatcher;
 use App\Services\Analysis\Link\RdapClient;
@@ -51,13 +52,26 @@ class LinkAnalyzer
         $lookalike = $this->matcher->findLookalike($host);
 
         if ($lookalike !== null) {
-            $signals[] = Signal::make('link.lookalike', [
+            $meta = [
                 'domain' => $info['domain'],
                 'official' => $lookalike['official']->domain,
                 'name' => $lookalike['official']->name,
                 'brand_id' => $lookalike['official']->brand_id,
                 'technique' => $lookalike['technique'],
-            ]);
+            ];
+
+            // Hasil pemindaian dan tinjauan domain tiruan (lihat sayno:scan-lookalikes).
+            $verdict = LookalikeDomain::verdictFor($domain, $info['domain']);
+
+            if ($verdict === LookalikeDomain::UNRELATED) {
+                $signals[] = Signal::make('link.other_owner', $meta);
+            } else {
+                $signals[] = Signal::make('link.lookalike', $meta);
+            }
+
+            if ($verdict === LookalikeDomain::SUSPICIOUS) {
+                $signals[] = Signal::make('link.known_lookalike', ['domain' => $info['domain'], 'name' => $meta['name']]);
+            }
         }
 
         if (in_array($domain, config('sayno.link.shorteners'), true) || in_array($host, config('sayno.link.shorteners'), true)) {

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Brand;
+use App\Models\LookalikeDomain;
 use App\Services\Checks\CheckService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -67,6 +69,47 @@ class PhishingListTest extends TestCase
     public function search_input_cannot_act_as_a_like_wildcard(): void
     {
         $this->get('/daftar-phishing?q=%25')->assertSee('belum ada di daftar ini.');
+    }
+
+    #[Test]
+    public function it_lists_registered_lookalike_domains_from_the_scanner(): void
+    {
+        $bca = Brand::where('slug', 'bca')->firstOrFail();
+
+        $domains = [
+            'klikbca-promo.com' => ['active', null],
+            'bca-care.com' => ['active', LookalikeDomain::SUSPICIOUS],
+            'bca-co.id' => ['active', null],
+            'k1ikbca.com' => ['gone', null],
+            'klik-bca.com' => ['active', LookalikeDomain::PARKED],
+            'bca.co' => ['active', LookalikeDomain::UNRELATED],
+        ];
+
+        foreach ($domains as $domain => [$status, $verdict]) {
+            LookalikeDomain::updateOrCreate(['brand_id' => $bca->id, 'domain' => $domain], [
+                'technique' => 'combo', 'source' => 'generator', 'first_seen_at' => now(), 'status' => $status, 'verdict' => $verdict,
+            ]);
+        }
+
+        $this->get('/daftar-phishing')->assertOk()
+            ->assertSee('Domain tiruan terdaftar')
+            ->assertSee('klikbca-promo[.]com')
+            ->assertSee('nama resmi ditambah kata lain')
+            ->assertSee('Tidak diketahui')
+            ->assertSee('4 domain tercatat')
+            ->assertSeeInOrder(['bca-care[.]com', 'Aktif meniru', 'klikbca-promo[.]com', 'Baru ditemukan'])
+            ->assertDontSee('k1ikbca')
+            ->assertDontSee('klik-bca[.]com')
+            ->assertDontSee('bca[.]co<', false)
+            ->assertDontSee('href="https://klikbca-promo', false);
+
+        $this->get('/daftar-phishing?q=klikbca-promo.com')
+            ->assertSee('klikbca-promo[.]com')
+            ->assertDontSee('Dinyatakan Bahaya')
+            ->assertDontSee('tokopedia-promo[.]com');
+
+        $this->get('/')->assertSee('/daftar-phishing#tiruan', false)
+            ->assertSeeInOrder(['Domain tiruan dipantau', '2']);
     }
 
     #[Test]

@@ -26,10 +26,10 @@
                 </button>
             </div>
         </form>
-        <p class="text-sm leading-5 font-medium text-ink-muted">{{ __('web.phishing.total', ['count' => number_format($total, 0, ',', '.')]) }}</p>
+        <p class="text-sm leading-5 font-medium text-ink-muted">{{ __('web.phishing.total', ['count' => number_format($total + $lookalikeTotal, 0, ',', '.')]) }}</p>
     </div>
 
-    @if ($search && $items->isEmpty())
+    @if ($search && $items->isEmpty() && $lookalikes->isEmpty())
         <div class="card mt-6 p-5 sm:p-6" role="status">
             <p class="font-semibold text-navy-900">{{ __('web.phishing.not_found', ['domain' => $search]) }}</p>
             <p class="mt-1 text-ink-muted">{{ __('web.phishing.not_found_hint') }}</p>
@@ -38,58 +38,107 @@
                 <a href="{{ route('phishing') }}" class="inline-flex min-h-12 items-center font-semibold text-navy-900 hover:underline">{{ __('web.phishing.search_reset') }}</a>
             </div>
         </div>
-    @elseif ($items->isEmpty())
-        <p class="card mt-6 p-6 text-ink-muted">{{ __('web.phishing.empty') }}</p>
     @else
-        <div class="card mt-6 overflow-x-auto">
-            <table class="w-full min-w-[640px] text-left text-sm leading-5">
-                <thead class="border-b border-line bg-paper text-ink-muted">
-                    <tr>
-                        <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_domain') }}</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_reason') }}</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_reports') }}</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_last_seen') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line">
-                    @foreach ($items as $item)
-                        <tr>
-                            <td class="px-4 py-3">
-                                <span class="inline-flex items-center gap-2">
-                                    <x-icon name="octagon-x" :size="16" class="text-danger-fg" />
-                                    <span class="font-mono text-[15px] break-all text-ink">{{ $item['defanged'] }}</span>
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">{{ $item['reason'] }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap">{{ __('web.phishing.reports', ['count' => $item['reports']]) }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap">{{ $item['last_seen']->translatedFormat('j M Y') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        @unless ($search && $items->isEmpty())
+            <section class="mt-8" aria-labelledby="bahaya-title">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 id="bahaya-title" class="text-2xl leading-8 font-bold text-navy-900">{{ __('web.phishing.danger_title') }}</h2>
+                    <p class="text-sm leading-5 font-medium text-ink-muted">{{ __('web.phishing.total', ['count' => number_format($total, 0, ',', '.')]) }}</p>
+                </div>
+                <p class="mt-1 text-ink-muted">{{ __('web.phishing.danger_lead') }}</p>
 
-        @if ($items->hasPages())
-            <nav class="mt-4 flex items-center justify-between gap-3" aria-label="{{ __('web.phishing.pagination') }}">
-                @if ($items->onFirstPage())
-                    <span></span>
+                @if ($items->isEmpty())
+                    <p class="card mt-4 p-6 text-ink-muted">{{ __('web.phishing.danger_empty') }}</p>
                 @else
-                    <a href="{{ $items->previousPageUrl() }}" class="btn-secondary" rel="prev">
-                        <x-icon name="arrow-left" :size="18" />
-                        {{ __('web.phishing.prev') }}
-                    </a>
+                    <div class="card mt-4 overflow-x-auto">
+                        <table class="w-full min-w-[640px] text-left text-sm leading-5">
+                            <thead class="border-b border-line bg-paper text-ink-muted">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_domain') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_reason') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_reports') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_last_seen') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-line">
+                                @foreach ($items as $item)
+                                    <tr>
+                                        <td class="px-4 py-3">
+                                            <span class="inline-flex items-center gap-2">
+                                                <x-icon name="octagon-x" :size="16" class="text-danger-fg" />
+                                                <span class="font-mono text-[15px] break-all text-ink">{{ $item['defanged'] }}</span>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">{{ $item['reason'] }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">{{ __('web.phishing.reports', ['count' => $item['reports']]) }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">{{ $item['last_seen']->translatedFormat('j M Y') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <x-pager :items="$items" />
                 @endif
-                <span class="text-sm text-ink-muted">{{ $items->currentPage() }} / {{ $items->lastPage() }}</span>
-                @if ($items->hasMorePages())
-                    <a href="{{ $items->nextPageUrl() }}" class="btn-secondary" rel="next">
-                        {{ __('web.phishing.next') }}
-                        <x-icon name="arrow-right" :size="18" />
-                    </a>
+            </section>
+        @endunless
+
+        @unless ($search && $lookalikes->isEmpty())
+            <section id="tiruan" class="mt-10" aria-labelledby="tiruan-title">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 id="tiruan-title" class="text-2xl leading-8 font-bold text-navy-900">{{ __('web.phishing.lookalike_title') }}</h2>
+                    <p class="text-sm leading-5 font-medium text-ink-muted">{{ __('web.phishing.total', ['count' => number_format($lookalikeTotal, 0, ',', '.')]) }}</p>
+                </div>
+                <p class="mt-1 max-w-[720px] text-ink-muted">{{ __('web.phishing.lookalike_lead') }}</p>
+
+                @if ($lookalikes->isEmpty())
+                    <p class="card mt-4 p-6 text-ink-muted">{{ __('web.phishing.lookalike_empty') }}</p>
                 @else
-                    <span></span>
+                    <div class="card mt-4 overflow-x-auto">
+                        <table class="w-full min-w-[640px] text-left text-sm leading-5">
+                            <thead class="border-b border-line bg-paper text-ink-muted">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_domain') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_status') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_brand') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_technique') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_registered') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold">{{ __('web.phishing.col_first_seen') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-line">
+                                @foreach ($lookalikes as $lookalike)
+                                    <tr>
+                                        <td class="px-4 py-3">
+                                            <span class="font-mono text-[15px] break-all text-ink">{{ $lookalike['defanged'] }}</span>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            @if ($lookalike['suspicious'])
+                                                <span class="inline-flex items-center gap-1.5 text-danger-fg">
+                                                    <x-icon name="octagon-x" :size="16" />
+                                                    <span class="font-semibold">{{ __('web.phishing.status_suspicious') }}</span>
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1.5 text-caution-fg">
+                                                    <x-icon name="triangle-alert" :size="16" />
+                                                    <span>{{ __('web.phishing.status_new') }}</span>
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">{{ $lookalike['brand'] }}</td>
+                                        <td class="px-4 py-3">{{ $lookalike['technique'] }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">{{ $lookalike['registered_at']?->translatedFormat('j M Y') ?? __('web.phishing.unknown_date') }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">{{ $lookalike['first_seen']->translatedFormat('j M Y') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <x-pager :items="$lookalikes" />
                 @endif
-            </nav>
-        @endif
+            </section>
+        @endunless
     @endif
 
     @if ($whatsappUrl)

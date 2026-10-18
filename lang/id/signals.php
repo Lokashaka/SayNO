@@ -5,6 +5,8 @@ return [
     'link' => [
         'official' => 'Situs ini terdaftar sebagai situs resmi :name.',
         'lookalike' => 'Situs :domain meniru situs resmi :name (:official).',
+        'known_lookalike' => 'Situs ini sudah tercatat di daftar situs tiruan :name milik SayNO.',
+        'other_owner' => 'Situs :domain bukan situs resmi :name (:official). Pemiliknya pihak lain, jadi jangan masukkan data akun :name di sana.',
         'new_domain' => 'Situs ini baru dibuat :age. Situs penipuan biasanya berumur pendek.',
         'blacklisted' => 'Situs ini tercatat sebagai situs berbahaya oleh Google Safe Browsing.',
         'shortener' => 'Link memakai penyingkat alamat, jadi tujuan aslinya tersembunyi.',

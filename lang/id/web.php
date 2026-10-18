@@ -23,7 +23,6 @@ return [
     'footer' => [
         'tagline' => 'Sistem peringatan dini penipuan digital.',
         'disclaimer' => 'Hasil pemeriksaan adalah penilaian otomatis, bukan jaminan. Kalau ragu, hubungi lembaga terkait lewat nomor atau situs resminya.',
-        'contest' => 'Karya untuk .id DeveloperDay 2026.',
     ],
 
     'home' => [
@@ -65,6 +64,7 @@ return [
         'stats_total' => 'Total pemeriksaan',
         'stats_danger_week' => 'Bahaya terdeteksi 7 hari terakhir',
         'stats_lookalikes' => 'Domain tiruan dipantau',
+        'stats_lookalikes_link' => 'Lihat daftarnya',
     ],
 
     'result' => [
@@ -114,8 +114,22 @@ return [
 
     'phishing' => [
         'title' => 'Daftar link phishing',
-        'lead' => 'Situs yang dinyatakan Bahaya dari pemeriksaan pengguna SayNO. Jangan buka situs-situs ini. Titik pada alamat sengaja ditulis [.] agar tidak bisa diklik.',
+        'lead' => 'Situs yang dinyatakan Bahaya dan domain tiruan merek resmi yang dipantau SayNO. Jangan buka situs-situs ini. Titik pada alamat sengaja ditulis [.] agar tidak bisa diklik.',
         'total' => ':count domain tercatat',
+        'danger_title' => 'Dinyatakan Bahaya',
+        'danger_lead' => 'Dari pemeriksaan pengguna SayNO lewat web dan WhatsApp.',
+        'danger_empty' => 'Belum ada link yang dinyatakan Bahaya. Domain tiruan yang kami pantau ada di bawah.',
+        'lookalike_title' => 'Domain tiruan terdaftar',
+        'lookalike_lead' => 'Nama domain yang dibuat mirip situs resmi. "Aktif meniru" berarti situsnya sudah kami periksa dan memakai nama atau tampilan merek. "Baru ditemukan" belum kami tinjau. Domain yang hanya dijual atau milik usaha lain tidak kami tampilkan.',
+        'lookalike_empty' => 'Belum ada domain tiruan yang terdeteksi.',
+        'col_brand' => 'Meniru',
+        'col_technique' => 'Cara meniru',
+        'col_registered' => 'Didaftarkan',
+        'col_first_seen' => 'Ditemukan',
+        'col_status' => 'Status',
+        'status_suspicious' => 'Aktif meniru',
+        'status_new' => 'Baru ditemukan',
+        'unknown_date' => 'Tidak diketahui',
         'search_label' => 'Cari domain',
         'search_placeholder' => 'contoh: bca-co.id',
         'search_submit' => 'Cari',
@@ -134,7 +148,7 @@ return [
         'next' => 'Berikutnya',
         'whatsapp_title' => 'Dapat link mencurigakan di WhatsApp?',
         'whatsapp_body' => 'Teruskan saja ke SayNO untuk dicek.',
-        'disclaimer' => 'Daftar ini disusun otomatis dari hasil pemeriksaan. Jika domain Anda keliru masuk daftar, hubungi :email dan kami tinjau.',
+        'disclaimer' => 'Daftar ini disusun otomatis dari hasil pemeriksaan dan pemindaian domain. Jika domain Anda keliru masuk daftar, hubungi :email dan kami tinjau.',
         'reasons' => [
             'lookalike' => 'Meniru situs resmi :name',
             'blacklisted' => 'Tercatat berbahaya oleh Google',
@@ -179,6 +193,10 @@ return [
         'new' => 'Baru',
         'status_active' => 'Aktif',
         'status_gone' => 'Tidak aktif',
+        'verdict_suspicious' => 'Aktif meniru',
+        'verdict_parked' => 'Dijual atau diparkir',
+        'verdict_unrelated' => 'Milik pihak lain',
+        'verdict_none' => 'Belum ditinjau',
         'source_user' => 'Laporan pengguna',
         'source_generator' => 'Pemindaian SayNO',
         'times' => ':count kali',

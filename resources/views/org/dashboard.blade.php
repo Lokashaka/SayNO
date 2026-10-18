@@ -68,13 +68,20 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if ($lookalike->status === 'active')
+                                    @if ($lookalike->status !== 'active')
+                                        <span class="text-ink-muted">{{ __('web.org.status_gone') }}</span>
+                                    @elseif ($lookalike->verdict === 'suspicious')
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-danger-bg px-2.5 py-1 text-danger-fg">
                                             <x-icon name="octagon-x" :size="16" />
-                                            <span class="status-label">{{ __('web.org.status_active') }}</span>
+                                            <span class="status-label">{{ __('web.org.verdict_suspicious') }}</span>
                                         </span>
+                                    @elseif ($lookalike->verdict === 'unrelated')
+                                        <span class="text-ink-muted">{{ __('web.org.verdict_unrelated') }}</span>
                                     @else
-                                        <span class="text-ink-muted">{{ __('web.org.status_gone') }}</span>
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-caution-bg px-2.5 py-1 text-caution-fg">
+                                            <x-icon name="triangle-alert" :size="16" />
+                                            <span class="status-label">{{ __('web.org.verdict_'.($lookalike->verdict ?? 'none')) }}</span>
+                                        </span>
                                     @endif
                                 </td>
                             </tr>

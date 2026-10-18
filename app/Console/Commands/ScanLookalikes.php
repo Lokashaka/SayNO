@@ -85,8 +85,40 @@ class ScanLookalikes extends Command
             'registered_at' => $lookalike->registered_at ?? $rdap->registrationDate($variant['domain']),
             'last_checked_at' => now(),
             'status' => 'active',
-        ])->save();
+        ]);
+
+        if ($lookalike->verdict_source !== LookalikeDomain::SOURCE_MANUAL) {
+            $verdict = $this->verdictFromNameservers($dns->nameservers($variant['domain']));
+
+            $lookalike->fill([
+                'verdict' => $verdict,
+                'verdict_source' => $verdict !== null ? LookalikeDomain::SOURCE_AUTO : null,
+            ]);
+        }
+
+        $lookalike->save();
 
         return true;
+    }
+
+    /**
+     * Server DNS parkir menandakan domain dijual; registrar perlindungan merek menandakan
+     * domain milik perusahaan besar. Selain itu dibiarkan untuk ditinjau.
+     *
+     * @param  list<string>  $nameservers
+     */
+    private function verdictFromNameservers(array $nameservers): ?string
+    {
+        foreach ([LookalikeDomain::PARKED, LookalikeDomain::UNRELATED] as $verdict) {
+            foreach (config("sayno.lookalike_nameservers.{$verdict}") as $suffix) {
+                foreach ($nameservers as $nameserver) {
+                    if ($nameserver === $suffix || str_ends_with($nameserver, '.'.$suffix)) {
+                        return $verdict;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

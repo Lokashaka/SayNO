@@ -180,14 +180,16 @@ BOT_FALLBACK_TOKEN=          # untuk Baileys cadangan
 
 ## 8. Deploy
 
-Hosting tidak punya terminal dan tidak mendukung symlink. Langkah lengkap ada di `DEPLOY.md`; ringkasnya:
+Hosting tidak punya terminal dan tidak mendukung symlink. Langkahnya:
 
-1. Di lokal: `npm run build` lalu `php scripts/build-deploy.php` → ZIP berisi kode dan `vendor/` tanpa paket dev.
-2. Upload dan extract ke `/home/USER/sayno` lewat File Manager.
-3. Buat subdomain `sayno.lokashaka.id` dengan document root `sayno/public`, lalu jalankan AutoSSL.
+1. Di lokal: `npm run build`, `php artisan test`, lalu `php scripts/build-deploy.php` → ZIP berisi kode dan `vendor/` tanpa paket dev.
+2. Upload dan extract ke `public_html/sayno` lewat File Manager. Server mewajibkan document root di dalam `public_html`; `sayno/.htaccess` meneruskan semua permintaan ke `public/` dan memblokir file berawalan titik, jadi jangan dihapus.
+3. Arahkan document root subdomain `sayno.lokashaka.id` ke `public_html/sayno/public`, set PHP 8.3 khusus vhost ini lewat MultiPHP, lalu jalankan AutoSSL.
 4. Buat database MySQL dan user-nya, isi `.env` lewat File Manager (termasuk `SAYNO_SETUP_TOKEN`).
 5. Buka `/_setup`: migrasi database, isi data awal, bangun cache. Lalu kosongkan `SAYNO_SETUP_TOKEN`.
-6. Cron Jobs cPanel: `* * * * * /usr/local/bin/php /home/USER/sayno/artisan schedule:run`. Jika tidak tersedia, pemanggil luar membuka `/_cron?token=...` tiap menit.
+6. Cron Jobs cPanel: `* * * * * /usr/local/bin/ea-php83 /home/USER/public_html/sayno/artisan schedule:run >> /dev/null 2>&1` (`/usr/local/bin/php` di server ini PHP 7.4). Jika tidak tersedia, pemanggil luar membuka `/_cron?token=...` tiap menit.
+
+Pembaruan berikutnya cukup mengganti file yang berubah. Migrasi baru dijalankan tanpa token dengan membuat file kosong `storage/app/private/run-migrations`: cron menjalankan `migrate --force` sekali, menghapus file itu, dan mencatat hasilnya di `storage/logs/migrate.log`. Unggah migrasi lebih dulu dan tunggu hasilnya sebelum mengunggah kode yang memakai kolom baru.
 7. Di Meta: isi Callback URL `https://sayno.lokashaka.id/webhook/whatsapp` dan Verify Token, lalu subscribe kolom `messages`.
 8. Buat token permanen lewat System User, simpan ke `.env`, lalu **Bangun cache** di `/_setup`.
 9. Terbitkan aplikasi Meta setelah `/privasi` dan `/syarat-ketentuan` online.

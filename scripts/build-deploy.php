@@ -9,7 +9,7 @@
  *
  * Hasil: dist/sayno-deploy-<waktu>.zip berisi folder "sayno/" lengkap dengan vendor/
  * (tanpa paket dev). Upload lewat File Manager, lalu Extract di /home/USER/.
- * Panduan lengkap: DEPLOY.md.
+ * Langkah deploy: bagian Deploy di ARCHITECTURE.md.
  */
 date_default_timezone_set('Asia/Jakarta');
 
@@ -92,7 +92,7 @@ removeDirectory($root.'/build/deploy');
 
 $size = round(filesize($zipPath) / 1024 / 1024, 1);
 echo PHP_EOL."Selesai: {$zipPath}".PHP_EOL."{$count} file, {$size} MB.".PHP_EOL;
-echo 'Langkah berikutnya ada di DEPLOY.md.'.PHP_EOL;
+echo 'Langkah berikutnya ada di bagian Deploy ARCHITECTURE.md.'.PHP_EOL;
 
 function copyTree(string $from, string $to, string $root, array $excluded): void
 {

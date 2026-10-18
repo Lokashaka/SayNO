@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Brand;
 use App\Models\LookalikeDomain;
 use App\Services\Analysis\Link\DnsResolver;
 use App\Services\Analysis\LookalikeGenerator;
@@ -48,9 +49,10 @@ class ScanLookalikesTest extends TestCase
             ['eventAction' => 'registration', 'eventDate' => '2026-10-01T00:00:00Z'],
         ]])]);
 
-        $this->mock(DnsResolver::class)
-            ->shouldReceive('isRegistered')
+        $dns = $this->mock(DnsResolver::class);
+        $dns->shouldReceive('isRegistered')
             ->andReturnUsing(fn (string $domain) => in_array($domain, ['bca.id', 'bca.com'], true));
+        $dns->shouldReceive('nameservers')->andReturn(['ns1.contoh-hosting.net']);
 
         $this->artisan('sayno:scan-lookalikes', ['brand' => 'bca', '--batch' => 5])->assertSuccessful();
 
@@ -59,5 +61,35 @@ class ScanLookalikesTest extends TestCase
         $this->assertNotContains('bca.co.id', $found, 'Domain resmi tidak boleh masuk daftar tiruan.');
         $this->assertSame('generator', LookalikeDomain::firstWhere('domain', 'bca.id')->source);
         $this->assertSame('2026-10-01', LookalikeDomain::firstWhere('domain', 'bca.id')->registered_at->toDateString());
+        $this->assertNull(LookalikeDomain::firstWhere('domain', 'bca.id')->verdict, 'Server DNS biasa dibiarkan untuk ditinjau.');
+    }
+
+    #[Test]
+    public function the_scan_marks_parked_and_brand_protected_domains_but_keeps_manual_reviews(): void
+    {
+        Http::fake(['rdap.org/*' => Http::response([], 404)]);
+        $bca = Brand::where('slug', 'bca')->sole();
+
+        LookalikeDomain::create([
+            'brand_id' => $bca->id, 'domain' => 'bca.net', 'technique' => 'tld', 'source' => 'generator',
+            'first_seen_at' => now(), 'verdict' => LookalikeDomain::SUSPICIOUS, 'verdict_source' => LookalikeDomain::SOURCE_MANUAL,
+        ]);
+
+        $nameservers = [
+            'bca.info' => ['ns1.dan.com', 'ns2.dan.com'],
+            'mybca.com' => ['dns1.cscdns.net'],
+            'bca.net' => ['ns1.sedoparking.com'],
+        ];
+
+        $dns = $this->mock(DnsResolver::class);
+        $dns->shouldReceive('isRegistered')->andReturnUsing(fn (string $domain) => isset($nameservers[$domain]));
+        $dns->shouldReceive('nameservers')->andReturnUsing(fn (string $domain) => $nameservers[$domain] ?? []);
+
+        $this->artisan('sayno:scan-lookalikes', ['brand' => 'bca', '--batch' => 500])->assertSuccessful();
+
+        $verdicts = LookalikeDomain::pluck('verdict', 'domain');
+        $this->assertSame(LookalikeDomain::PARKED, $verdicts['bca.info']);
+        $this->assertSame(LookalikeDomain::UNRELATED, $verdicts['mybca.com']);
+        $this->assertSame(LookalikeDomain::SUSPICIOUS, $verdicts['bca.net'], 'Tinjauan manual tidak boleh ditimpa.');
     }
 }

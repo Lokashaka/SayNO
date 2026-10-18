@@ -15,6 +15,10 @@ return [
     'weights' => [
         'link.blacklisted' => 100,
         'link.lookalike' => 50,
+        // Domain tiruan yang sudah tercatat aktif meniru (lookalike + ini = Bahaya).
+        'link.known_lookalike' => 30,
+        // Pengganti link.lookalike untuk domain milik usaha lain bernama sama (cukup Waspada).
+        'link.other_owner' => 30,
         'link.new_domain' => 25,
         'link.shortener' => 10,
 
@@ -170,6 +174,22 @@ return [
 
     // Jumlah variasi domain merek yang dicek per jam.
     'lookalike_batch' => (int) env('SAYNO_LOOKALIKE_BATCH', 15),
+
+    // Penilaian otomatis domain tiruan dari server DNS-nya (dicocokkan dengan akhiran nama server).
+    // Penilaian manual (verdict_source = manual) tidak ditimpa.
+    'lookalike_nameservers' => [
+        // Domain dijual, diparkir, atau kedaluwarsa.
+        'parked' => [
+            'sedoparking.com', 'afternic.com', 'dan.com', 'abovedomains.com', 'above.com', 'parkingcrew.net',
+            'bodis.com', 'namefind.com', 'parklogic.com', 'dns-parking.com', 'dns-expired.com',
+            'pulaudomain.com', 'namebrightdns.com', 'eftydns.com', 'namepros-dns.com', 'hugedomains.com',
+            'dyna-ns.net', 'uniregistrymarket.link',
+        ],
+        // Registrar perlindungan merek; domainnya hampir selalu milik perusahaan besar.
+        'unrelated' => [
+            'cscdns.net', 'cscdns.uk', 'markmonitor.com', 'safenames.net', 'comlaude-dns.com',
+        ],
+    ],
 
     // Alamat kontak di halaman privasi.
     'contact_email' => env('SAYNO_CONTACT_EMAIL', 'halo@lokashaka.id'),

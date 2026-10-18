@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\LookalikeDomain;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -37,7 +38,7 @@ class OrgDashboardController extends Controller
             'fakeApks' => $fakeApks,
             'dangerousPermissions' => self::DANGEROUS_PERMISSIONS,
             'summary' => [
-                'lookalikes' => $lookalikes->where('status', 'active')->count(),
+                'lookalikes' => $lookalikes->where('status', 'active')->where('verdict', '!==', LookalikeDomain::UNRELATED)->count(),
                 'fake_apks' => $fakeApks->count(),
                 'reports_week' => $lookalikes->where('source', 'user')->where('last_checked_at', '>=', now()->subDays(7))->sum('times_reported')
                     + $fakeApks->where('last_seen_at', '>=', now()->subDays(7))->count(),

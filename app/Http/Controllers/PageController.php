@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Check;
-use App\Models\LookalikeDomain;
 use App\Services\Checks\PhishingList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -12,12 +11,13 @@ use Illuminate\View\View;
 
 class PageController extends Controller
 {
-    public function home(): View
+    public function home(PhishingList $list): View
     {
         $stats = Cache::remember('home-stats', now()->addMinutes(5), fn () => [
             'total' => Check::count(),
             'danger_week' => Check::where('status', Status::Danger)->where('created_at', '>=', now()->subDays(7))->count(),
-            'lookalikes' => LookalikeDomain::where('status', 'active')->count(),
+            // Sama dengan jumlah di daftar publik, agar angka beranda bisa ditelusuri.
+            'lookalikes' => $list->lookalikeCount(),
         ]);
 
         return view('home', [
@@ -34,6 +34,8 @@ class PageController extends Controller
         return view('phishing', [
             'items' => $list->paginate($search),
             'total' => $list->count(),
+            'lookalikes' => $list->lookalikes($search),
+            'lookalikeTotal' => $list->lookalikeCount(),
             'search' => $search,
             'whatsappUrl' => $this->whatsappUrl(),
         ]);

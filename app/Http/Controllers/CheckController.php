@@ -75,7 +75,7 @@ class CheckController extends Controller
             'check' => $check,
             'summary' => $composer->summary($check),
             'info' => $check->signals->firstWhere('code', $check->input_type->value === 'apk' ? 'apk.info' : 'link.domain')?->meta ?? [],
-            'lookalike' => $check->signals->firstWhere('code', 'link.lookalike')?->meta,
+            'lookalike' => $check->signals->whereIn('code', ['link.lookalike', 'link.other_owner'])->first()?->meta,
             'patterns' => $check->signals->where('code', 'text.pattern')->pluck('meta.category')->all(),
             'fileName' => session('file_name'),
         ]);

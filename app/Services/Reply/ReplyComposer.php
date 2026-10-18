@@ -104,7 +104,7 @@ class ReplyComposer
     {
         $actions = __("result.actions.{$status->value}.{$type}");
 
-        $lookalike = collect($signals)->firstWhere('code', 'link.lookalike');
+        $lookalike = collect($signals)->first(fn (Signal $signal) => in_array($signal->code, ['link.lookalike', 'link.other_owner'], true));
 
         if ($lookalike !== null && $status !== Status::Safe) {
             $actions[] = __('result.official_site', ['domain' => $lookalike->meta['official']]);

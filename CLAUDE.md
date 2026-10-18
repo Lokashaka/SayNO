@@ -29,7 +29,7 @@ Tenggat: submit paper dan video **25 Oktober 2026**. Final 10–11 November 2026
 
 Kode harus jalan di **shared hosting cPanel paket terendah yang hanya mendukung PHP**: **tanpa terminal (SSH) dan tanpa symlink**. Akibatnya:
 
-- **Tidak ada `composer`, `npm`, atau `php artisan` di server.** `vendor/` dan `public/build` dibuat di lokal lalu diupload (`php scripts/build-deploy.php`). Migrate, seed, dan cache lewat halaman `/_setup` yang dilindungi token. Lihat `DEPLOY.md`.
+- **Tidak ada `composer`, `npm`, atau `php artisan` di server.** `vendor/` dan `public/build` dibuat di lokal lalu diupload (`php scripts/build-deploy.php`). Migrate, seed, dan cache lewat halaman `/_setup` yang dilindungi token. Lihat bagian Deploy di `ARCHITECTURE.md`.
 - **Tidak ada symlink.** Jangan memakai `storage:link` atau file publik di `storage/app/public`. Document root subdomain diarahkan ke `public_html/sayno/public` lewat menu cPanel (server ini mewajibkan document root di dalam `public_html`; `sayno/.htaccess` menjaga kode dari akses lewat domain utama).
 - **Tugas terjadwal wajib `Schedule::call()` + `Artisan::call()`.** `Schedule::command()` dan `Schedule::exec()` membuat proses baru lewat `proc_open`. Test `HostingWithoutTerminalTest` menjaga aturan ini.
 
@@ -56,7 +56,7 @@ npm install && npm run build                # aset Tailwind; hasil build di-comm
 ./vendor/bin/pint                           # format kode
 ```
 
-Deploy ke cPanel (tanpa terminal, panduan lengkap di `DEPLOY.md`):
+Deploy ke cPanel (tanpa terminal, ringkasan langkah di bagian Deploy `ARCHITECTURE.md`):
 
 ```bash
 npm run build && php artisan test
