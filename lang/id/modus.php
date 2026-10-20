@@ -28,7 +28,7 @@ return [
             ],
             'avoid' => [
                 'Undangan dan surat asli berbentuk gambar atau PDF, bukan aplikasi.',
-                'Jangan instal aplikasi dari chat. Unduh hanya dari Play Store.',
+                'Jangan instal aplikasi dari chat. Unduh hanya dari Play Store, App Store, atau situs resmi pembuatnya.',
                 'Teruskan dulu ke SayNO kalau ragu.',
             ],
         ],

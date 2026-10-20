@@ -68,7 +68,7 @@ return [
         'caution' => [
             'apk' => [
                 'Jangan instal kalau Anda tidak yakin asal file ini.',
-                'Unduh aplikasi hanya dari Play Store.',
+                'Unduh aplikasi hanya dari Play Store, App Store, atau situs resmi pembuatnya.',
             ],
             'link' => [
                 'Jangan isi data pribadi di situs ini.',
@@ -81,7 +81,7 @@ return [
         ],
         'safe' => [
             'apk' => [
-                'Tetap instal aplikasi hanya dari Play Store.',
+                'Tetap instal aplikasi hanya dari Play Store, App Store, atau situs resmi pembuatnya.',
                 'Jangan bagikan kode OTP ke siapa pun.',
             ],
             'link' => [

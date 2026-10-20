@@ -156,6 +156,11 @@ class DomainParser
         $base = strtr($unicode, self::CONFUSABLES);
         $base = str_replace(['0', 'rn', 'vv', '5', '3'], ['o', 'm', 'w', 's', 'e'], $base);
 
+        // 4 -> a hanya untuk label panjang (d4na-kaget); label pendek seperti bc4 sering nama usaha asli.
+        if (strlen($base) >= 5) {
+            $base = str_replace('4', 'a', $base);
+        }
+
         return array_values(array_unique([
             $base,
             str_replace('1', 'l', $base),
