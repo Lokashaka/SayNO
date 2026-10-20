@@ -2,6 +2,7 @@
 
 namespace App\Services\WhatsApp;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -118,12 +119,17 @@ class CloudApiClient
         return false;
     }
 
+    /**
+     * DNS di shared hosting kadang lambat (lookaside.fbsbx.com pernah butuh >5 detik), jadi
+     * koneksi diberi waktu lebih lama dan dicoba ulang. Respons error dari Meta tidak diulang.
+     */
     private function graph(): PendingRequest
     {
         return Http::withToken((string) config('services.meta.access_token'))
             ->acceptJson()
             ->timeout(15)
-            ->connectTimeout(5);
+            ->connectTimeout(15)
+            ->retry(3, 1000, fn (Throwable $e) => $e instanceof ConnectionException, throw: false);
     }
 
     private function url(string $path): string

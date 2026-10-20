@@ -11,6 +11,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Sleep;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\AxmlBuilder;
@@ -149,6 +150,31 @@ class WhatsAppWebhookTest extends TestCase
         $this->assertSame([], Storage::disk('local')->allFiles(), 'APK harus dihapus setelah dianalisis.');
 
         Http::assertSent(fn (Request $request) => $request->url() === self::MEDIA_URL && $request->hasHeader('Authorization', 'Bearer token-akses-uji'));
+    }
+
+    #[Test]
+    public function a_slow_dns_lookup_for_meta_media_is_retried(): void
+    {
+        Sleep::fake();
+        $apk = file_get_contents(AxmlBuilder::apk(['manifest', ['package' => 'com.bca.mobile.update'], [
+            ['uses-permission', ['name' => 'android.permission.READ_SMS']],
+        ]]));
+
+        Http::fake([
+            'graph.facebook.com/*/1111/messages' => Http::response(['messages' => [['id' => 'wamid.balasan']]]),
+            'graph.facebook.com/*' => Http::response(['url' => self::MEDIA_URL, 'file_size' => strlen($apk)]),
+            // Seperti di server: resolusi DNS lookaside.fbsbx.com sempat habis waktu.
+            'lookaside.fbsbx.com/*' => Http::sequence()
+                ->pushFailedConnection('cURL error 28: Resolving timed out after 5000 milliseconds')
+                ->push($apk),
+        ]);
+
+        $this->postSigned($this->payload([$this->documentMessage('wamid.DNS', 'BCA_Mobile_Update.apk', 'application/vnd.android.package-archive')]));
+
+        $bodies = array_column(array_column($this->sentMessages(), 'text'), 'body');
+        $this->assertCount(2, $bodies);
+        $this->assertStringStartsWith('🔴 *BAHAYA, jangan diinstal.*', $bodies[1]);
+        $this->assertSame(hash('sha256', $apk), Check::sole()->file_sha256);
     }
 
     #[Test]
