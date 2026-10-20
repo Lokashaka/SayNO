@@ -9,8 +9,11 @@ use Illuminate\Database\Seeder;
  * Domain resmi yang tidak terkait merek di tabel brands. Domain resmi dianggap aman
  * dan menjadi acuan deteksi domain tiruan.
  *
- * Jangan masukkan domain milik layanan besar yang punya banyak domain turunan
- * (misalnya Google), karena domain turunannya akan dianggap tiruan.
+ * Label domain resmi menjadi acuan peniruan, jadi setiap domain lain yang memuat label
+ * itu bisa dianggap tiruan. Untuk layanan besar (Google, Meta, TikTok), daftarkan juga
+ * domain turunan yang dipakai sehari-hari (googleusercontent.com, instagr.am). Jangan
+ * masukkan merek yang namanya kata umum (Apple, Office, Outlook), karena situs biasa
+ * seperti pineapple.com ikut tertandai.
  */
 class OfficialDomainSeeder extends Seeder
 {
@@ -26,9 +29,19 @@ class OfficialDomainSeeder extends Seeder
             'Bank Jago' => ['jago.com'],
             'SeaBank' => ['seabank.co.id'],
             'Bank Indonesia' => ['bi.go.id'],
+            'Maybank' => ['maybank.co.id'],
+            'Bank Mega' => ['bankmega.com'],
+            'Bank BJB' => ['bankbjb.co.id'],
+            'Bank Jatim' => ['bankjatim.co.id'],
+            'Bank DKI' => ['bankdki.co.id'],
+            'Allo Bank' => ['allobank.com'],
+            'blu by BCA Digital' => ['blubybcadigital.id'],
         ],
         'ewallet' => [
             'LinkAja' => ['linkaja.id'],
+            'Kredivo' => ['kredivo.com', 'kredivo.id'],
+            'Akulaku' => ['akulaku.com'],
+            'PayPal' => ['paypal.com', 'paypal.me'],
         ],
         'ecommerce' => [
             'Lazada' => ['lazada.co.id'],
@@ -37,6 +50,7 @@ class OfficialDomainSeeder extends Seeder
             'Traveloka' => ['traveloka.com'],
             'tiket.com' => ['tiket.com'],
             'Grab' => ['grab.com'],
+            'Zalora' => ['zalora.co.id'],
         ],
         'courier' => [
             'JNE' => ['jne.co.id'],
@@ -47,6 +61,7 @@ class OfficialDomainSeeder extends Seeder
             'Ninja Xpress' => ['ninjaxpress.co'],
             'Lion Parcel' => ['lionparcel.com'],
             'SPX Express' => ['spx.co.id'],
+            'Paxel' => ['paxel.co'],
         ],
         'gov' => [
             'Direktorat Jenderal Pajak' => ['pajak.go.id'],
@@ -62,6 +77,12 @@ class OfficialDomainSeeder extends Seeder
             'LAPOR!' => ['lapor.go.id'],
             'Portal Indonesia' => ['indonesia.go.id'],
             'PANDI' => ['pandi.id'],
+            'Bea Cukai' => ['beacukai.go.id'],
+            'Kementerian Sosial' => ['kemensos.go.id'],
+            'Kementerian Ketenagakerjaan' => ['kemnaker.go.id'],
+            'Kartu Prakerja' => ['prakerja.go.id'],
+            'BKN' => ['bkn.go.id'],
+            'Imigrasi' => ['imigrasi.go.id'],
         ],
         'utility' => [
             'PLN' => ['pln.co.id'],
@@ -71,9 +92,22 @@ class OfficialDomainSeeder extends Seeder
             'IndiHome' => ['indihome.co.id'],
             'XL' => ['xl.co.id'],
             'Indosat Ooredoo' => ['ioh.co.id'],
+            'Smartfren' => ['smartfren.com'],
+            'Pegadaian' => ['pegadaian.co.id'],
+            'Taspen' => ['taspen.co.id'],
         ],
         'other' => [
-            'WhatsApp' => ['whatsapp.com'],
+            'WhatsApp' => ['whatsapp.com', 'whatsapp.net'],
+            'Google' => [
+                'google.com', 'google.co.id', 'gmail.com', 'youtube.com',
+                'googleusercontent.com', 'googleapis.com', 'googlevideo.com', 'googleblog.com',
+            ],
+            'Facebook' => ['facebook.com', 'fb.me', 'facebookmail.com'],
+            'Instagram' => ['instagram.com', 'instagr.am', 'cdninstagram.com'],
+            'TikTok' => ['tiktok.com', 'tiktokv.com', 'tiktokcdn.com'],
+            'Telegram' => ['telegram.org', 'telegram.me', 't.me'],
+            'Netflix' => ['netflix.com'],
+            'Microsoft' => ['microsoft.com', 'microsoftonline.com'],
             'SayNO' => ['sayno.lokashaka.id'],
         ],
     ];
