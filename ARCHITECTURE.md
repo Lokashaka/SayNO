@@ -16,8 +16,6 @@ Pengguna web ─────►│ Dashboard organisasi ◄───────
                    └───────────────────────────────────────────────┬──────────────────────────────┘
                                                                     ▼
                                              API luar: Safe Browsing, RDAP, Gemini (opsional)
-
-Cadangan: Baileys (Pterodactyl) ─► POST /api/bot/inbound (token) ─► pipeline yang sama
 ```
 
 | Komponen | Tempat | Tugas |
@@ -30,7 +28,6 @@ Cadangan: Baileys (Pterodactyl) ─► POST /api/bot/inbound (token) ─► pipe
 | ReplyComposer | cPanel | Menyusun balasan bahasa awam |
 | Web publik | cPanel | Cek manual, edukasi, statistik, kebijakan privasi |
 | Dashboard organisasi | cPanel | Domain tiruan dan APK palsu per merek |
-| Gateway cadangan | Pterodactyl | Baileys, hanya dipakai jika akun Meta bermasalah |
 
 ## 2. Alur pesan WhatsApp
 
@@ -57,8 +54,6 @@ Waktu balasan yang diharapkan: teks dan link sekitar 1 menit (menunggu cron), AP
 | --- | --- | --- | --- |
 | GET | `/webhook/whatsapp` | Verifikasi webhook Meta | `hub.verify_token` |
 | POST | `/webhook/whatsapp` | Pesan masuk dan status pengiriman | `X-Hub-Signature-256` |
-| POST | `/api/bot/inbound` | Pesan masuk dari Baileys (cadangan) | Header `X-Bot-Token` |
-| GET | `/api/bot/outbox` | Balasan siap kirim untuk Baileys (polling) | Header `X-Bot-Token` |
 | GET | `/` | Beranda: cek link, upload APK | Publik, rate limit |
 | POST | `/cek/link` | Cek link dari web | Publik, rate limit, CSRF |
 | POST | `/cek/apk` | Upload APK utuh dari web | Publik, rate limit, CSRF, maks 20 MB |
@@ -143,11 +138,10 @@ Skor = min(100, jumlah bobot). Status: **0–29 Aman**, **30–59 Waspada**, **6
 ## 6. Database
 
 ```
-inbound_messages   id, wamid (unik), channel (meta|baileys), sender_hash, type, check_id, received_at, processed_at   -- tanpa isi pesan
+inbound_messages   id, wamid (unik), channel (meta), sender_hash, type, check_id, received_at, processed_at   -- tanpa isi pesan
 checks             id (ulid), source (wa|web), sender_hash, input_type (link|apk|text),
                    domain, file_sha256, score, status (safe|caution|danger), created_at
 signals            id, check_id, code, weight, meta (json)
-outbound_messages  id, check_id, channel, recipient_hash, body, sent_at, error   -- outbox untuk Baileys
 official_domains   id, brand_id (nullable), domain, category (bank|ewallet|gov|ecommerce|…)
 scam_patterns      id, category, pattern, is_regex, active
 brands             id, name, slug, primary_domain, official_packages (json)
@@ -175,7 +169,6 @@ META_GRAPH_VERSION=v25.0
 
 SAFE_BROWSING_KEY=
 GEMINI_API_KEY=              # opsional
-BOT_FALLBACK_TOKEN=          # untuk Baileys cadangan
 ```
 
 ## 8. Deploy
@@ -199,4 +192,4 @@ Pembaruan berikutnya cukup mengganti file yang berubah. Migrasi baru dijalankan 
 - Tidak ada analisis dinamis APK (sandbox). Analisis hanya statis.
 - Tidak ada proses yang berjalan terus di cPanel; semua latar belakang lewat cron.
 - Dashboard organisasi untuk lomba hanya memakai satu merek contoh dan login sederhana.
-- Baileys bukan jalur utama dan hanya dinyalakan jika akun Meta bermasalah.
+- WhatsApp hanya lewat Cloud API resmi Meta; tidak ada jalur tidak resmi.

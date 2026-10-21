@@ -21,7 +21,6 @@ Tenggat: submit paper dan video **25 Oktober 2026**. Final 10–11 November 2026
 | Database | MySQL (dari cPanel) |
 | Antrean | Laravel Queue, driver `database`, dijalankan cron |
 | WhatsApp | WhatsApp Cloud API resmi (Meta), lewat webhook |
-| Cadangan WhatsApp | Baileys (Node.js) di Pterodactyl, hanya jika akun Meta bermasalah |
 | API luar | Google Safe Browsing, RDAP, Gemini API (opsional) |
 | Hosting | Shared hosting cPanel (Rumahweb), subdomain `sayno.lokashaka.id` |
 
@@ -127,4 +126,4 @@ Sebuah fitur dianggap selesai jika:
 
 ## Prioritas sampai 25 Oktober
 
-Kerjakan **P0** dulu (lihat PRD): webhook, deteksi jenis isi, cek link, cek APK, cek teks, skor dan balasan, web cek manual, riwayat cek, dan dashboard organisasi untuk satu merek contoh. Fitur P1 (edukasi, panel admin, Gemini, cache, Baileys cadangan, email peringatan) dikerjakan setelah P0 stabil.
+Kerjakan **P0** dulu (lihat PRD): webhook, deteksi jenis isi, cek link, cek APK, cek teks, skor dan balasan, web cek manual, riwayat cek, dan dashboard organisasi untuk satu merek contoh. Fitur P1 (edukasi, panel admin, Gemini, cache, email peringatan) dikerjakan setelah P0 stabil.

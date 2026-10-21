@@ -155,9 +155,12 @@ Prioritas P0 wajib ada saat submit 25 Oktober; P1 dikerjakan sebelum final; P2 m
 | F11 | Panel admin: kelola daftar domain resmi dan pola modus, lihat statistik | P1 |
 | F12 | Penjelasan tambahan berbasis AI (Gemini API) untuk teks yang ambigu | P1 |
 | F13 | Cache hasil: link atau APK yang sama tidak dianalisis ulang | P1 |
-| F15 | Jalur cadangan Baileys bila akun Meta bermasalah, memakai endpoint Laravel yang sama | P1 |
+| F15 | Verifikasi bisnis Meta agar nama SayNO tampil di daftar chat semua pengguna | P1 |
 | F17 | Peringatan email ke organisasi saat domain tiruan baru terdeteksi | P1 |
 | F14 | Tombol "Laporkan" untuk menambah sampel ke database ancaman | P2 |
+| F18 | Ekstensi browser: cek link di browser dan WhatsApp Web sebelum dibuka | P2 |
+| F19 | Aplikasi Android dengan tombol mengambang (seperti aplikasi auto clicker): cek link atau file di layar hanya saat tombol diketuk, tanpa meneruskan. Di iOS lewat menu Share dan Shortcut, karena iOS tidak mengizinkan tombol mengambang | P2 |
+| F20 | AI support khusus partner berbayar: analisis pesan dan APK yang memakai merek mereka, ringkasan serangan bulanan, draf permintaan takedown dan peringatan nasabah | P2 |
 
 ## Kebutuhan non-fungsional
 
@@ -172,7 +175,7 @@ Semua kebutuhan ini harus bisa dipenuhi di shared hosting cPanel (PHP saja), tan
 | Privasi | Hanya menyimpan nomor yang di-hash, hash file, domain, dan skor; isi pesan tidak disimpan; kebijakan privasi tersedia di `/privasi` |
 | Batas eksekusi | Webhook langsung menjawab 200 OK; analisis berjalan lewat antrean database + cron tiap menit, lalu balasan dikirim lewat API Meta |
 | Ukuran file | Maksimal 20 MB per APK |
-| Nomor bot | Nomor khusus yang tidak terpasang di aplikasi WhatsApp; satu nomor cadangan tetap di aplikasi untuk uji dan jalur Baileys |
+| Nomor bot | Nomor khusus yang tidak terpasang di aplikasi WhatsApp; satu nomor lain tetap di aplikasi WhatsApp untuk uji |
 | Perilaku bot | Hanya membalas di dalam jendela layanan 24 jam; tidak mengirim pesan promosi |
 | Aksesibilitas | Kontras WCAG AA, status tidak hanya dibedakan warna, teks isi minimal 16 px |
 | Biaya | Rp 100.000 pendaftaran + domain; WhatsApp gratis untuk 1.000 pesan layanan per nomor per bulan; API lain memakai paket gratis |
@@ -195,10 +198,9 @@ Pengguna WhatsApp ⇄ WhatsApp Cloud API (server Meta)
 │ Web publik (cek manual, edukasi) dan dashboard organisasi     │
 └───────────────────────────────────────────────────────────────┘
 Pengguna web ──► Web publik
-Cadangan: Baileys di Pterodactyl ──► endpoint Laravel yang sama
 ```
 
-Meta mengirim setiap pesan masuk ke webhook Laravel lewat HTTPS. Laravel memverifikasi tanda tangan Meta, menjawab 200 OK, lalu menjalankan analisis di antrean. Balasan dikirim ke pengguna lewat API Meta, masih di dalam jendela 24 jam. Dashboard organisasi membaca data yang sama dari database. Baileys di Pterodactyl hanya disiapkan sebagai jalur cadangan dan memakai endpoint Laravel yang sama. Detail lengkap ada di `ARCHITECTURE.md`.
+Meta mengirim setiap pesan masuk ke webhook Laravel lewat HTTPS. Laravel memverifikasi tanda tangan Meta, menjawab 200 OK, lalu menjalankan analisis di antrean. Balasan dikirim ke pengguna lewat API Meta, masih di dalam jendela 24 jam. Dashboard organisasi membaca data yang sama dari database. Detail lengkap ada di `ARCHITECTURE.md`.
 
 ## Logika skor risiko
 
@@ -227,11 +229,11 @@ Setiap balasan menyebut alasan utamanya, supaya juri dan pengguna bisa melihat h
 
 ## Risiko dan mitigasi
 
-Risiko terbesar adalah akun Meta belum terverifikasi saat penjurian, sehingga bot hanya bisa membalas nomor uji; jalur cadangannya disiapkan sejak awal.
+Risiko terbesar adalah akun Meta belum terverifikasi saat penjurian, sehingga bot hanya bisa membalas nomor uji; verifikasi diajukan sejak awal dan web tetap bisa dipakai.
 
 | Risiko | Dampak | Mitigasi |
 | --- | --- | --- |
-| Verifikasi bisnis Meta lambat | Juri tidak bisa mencoba bot | Ajukan verifikasi sekarang; sementara daftarkan nomor juri sebagai penerima uji atau aktifkan Baileys cadangan; web tetap bisa dipakai |
+| Verifikasi bisnis Meta lambat | Juri tidak bisa mencoba bot | Ajukan verifikasi sekarang; sementara daftarkan nomor juri sebagai penerima uji; web tetap bisa dipakai |
 | Aplikasi Meta belum diterbitkan | Webhook hanya menerima pesan uji dari dasbor | Terbitkan aplikasi setelah webhook dan halaman kebijakan privasi siap |
 | Token akses sementara kedaluwarsa | Bot berhenti membalas | Pakai token permanen dari System User |
 | Batas waktu eksekusi PHP di cPanel | Analisis APK besar gagal | Webhook langsung 200 OK, analisis lewat antrean + cron |
@@ -267,7 +269,7 @@ Setelah submit, waktu sampai final 10–11 November dipakai untuk fitur P1, lati
 - [x] Nama produk: **SayNO**
 - [x] Domain: **sayno.lokashaka.id**
 - [x] Kategori: Business Services, subkategori Security Solutions (masih bisa diubah sebelum karya dikirim)
-- [x] Jalur WhatsApp utama: WhatsApp Cloud API resmi; Baileys hanya cadangan
+- [x] Jalur WhatsApp utama: WhatsApp Cloud API resmi, tanpa jalur tidak resmi
 - [x] Logo: [SayNO — Logo di Figma](https://www.figma.com/design/5ADmLdWw6lYQW9IJPL1yP0)
 
 ## Pertanyaan terbuka
