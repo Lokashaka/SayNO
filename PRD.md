@@ -161,6 +161,7 @@ Prioritas P0 wajib ada saat submit 25 Oktober; P1 dikerjakan sebelum final; P2 m
 | F18 | Ekstensi browser: cek link di browser dan WhatsApp Web sebelum dibuka | P2 |
 | F19 | Aplikasi Android dengan tombol mengambang (seperti aplikasi auto clicker): cek link atau file di layar hanya saat tombol diketuk, tanpa meneruskan. Di iOS lewat menu Share dan Shortcut, karena iOS tidak mengizinkan tombol mengambang | P2 |
 | F20 | AI support khusus partner berbayar: analisis pesan dan APK yang memakai merek mereka, ringkasan serangan bulanan, draf permintaan takedown dan peringatan nasabah | P2 |
+| F21 | Server MCP (Model Context Protocol) agar asisten AI seperti Claude atau ChatGPT bisa menjalankan cek SayNO untuk penggunanya | P2 |
 
 ## Kebutuhan non-fungsional
 
