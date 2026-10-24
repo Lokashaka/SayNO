@@ -1,4 +1,4 @@
-# SayNO — Katakan tidak pada penipu
+# SayNO - Katakan tidak pada penipu
 
 Sistem peringatan dini penipuan digital lewat WhatsApp. Teruskan link, file APK, atau pesan mencurigakan ke bot SayNO, lalu dapatkan status **Aman / Waspada / Bahaya** beserta alasannya dalam bahasa sehari-hari. Dibuat untuk .id DeveloperDay 2026 (Business Services – Security Solutions).
 
